@@ -1,0 +1,38 @@
+name: Daily Content Automation
+
+on:
+  schedule:
+    - cron: '0 9 * * *'  # Daily at 9 AM UTC
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  scrape-content:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+    
+    - name: Install dependencies
+      run: |
+        pip install requests beautifulsoup4 feedparser
+    
+    - name: Run content scraper
+      run: python content_scraper.py
+    
+    - name: Send email report
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+        subject: "Daily Content Report - ${{ steps.date.outputs.date }}"
+        to: ${{ secrets.EMAIL_TO }}
+        from: Content Automation
+        body: file://content_report.html
+        attachments: content_queue.csv
