@@ -39,6 +39,5 @@ jobs:
         subject: Daily Content Report - ${{ steps.date.outputs.date }}
         to: ${{ secrets.EMAIL_TO }}
         from: Content Automation <${{ secrets.EMAIL_USERNAME }}>
-        html_body: file://content_report.html
-        convert_markdown: false
+        body: file://content_report.txt
         attachments: content_queue.csv
