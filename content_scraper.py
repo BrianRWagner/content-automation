@@ -376,7 +376,7 @@ def main():
     
     # Generate simple text report for email
     text_report = generate_text_report(all_content)
-    with open('content_report.html', 'w', encoding='utf-8') as f:
+    with open('content_report.txt', 'w', encoding='utf-8') as f:
         f.write(text_report)
     
     # Generate CSV
