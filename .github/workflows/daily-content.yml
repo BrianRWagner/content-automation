@@ -36,8 +36,21 @@ jobs:
         secure: true
         username: ${{ secrets.EMAIL_USERNAME }}
         password: ${{ secrets.EMAIL_PASSWORD }}
-        subject: Daily Content Report - ${{ steps.date.outputs.date }}
+        subject: "Daily Content Report - ${{ steps.date.outputs.date }}"
         to: ${{ secrets.EMAIL_TO }}
-        from: Content Automation <${{ secrets.EMAIL_USERNAME }}>
-        body: file://content_report.txt
-        attachments: content_queue.csv
+        from: "Content Automation <${{ secrets.EMAIL_USERNAME }}>"
+        body: |
+          Your daily content automation has completed successfully!
+          
+          Found quality content from your 57 premium sources.
+          
+          ATTACHMENTS:
+          • content_queue.csv - LinkedIn posts ready to copy-paste
+          • content_report.txt - Full detailed report
+          
+          Simply open the CSV file and copy posts from the "LinkedIn Post" column.
+          
+          Automation runs daily at 9 AM UTC.
+        attachments: |
+          content_queue.csv
+          content_report.txt
