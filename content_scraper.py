@@ -85,32 +85,27 @@ PILLAR_KEYWORDS = {
     "Leadership & Strategy": [
         "leadership", "strategy", "strategic", "team", "management", "decision", 
         "focus", "clarity", "vision", "execution", "planning", "goals", "culture",
-        "transformation", "change", "innovation", "growth", "performance", "results",
-        "leader", "leaders", "manage", "lead", "direct", "guide", "influence"
+        "transformation", "change", "innovation", "growth", "performance", "results"
     ],
     "Brand & Marketing": [
         "brand", "marketing", "branding", "positioning", "customer", "audience",
         "resonance", "emotion", "experience", "storytelling", "content", "engagement",
-        "advertising", "campaign", "creative", "message", "identity", "perception",
-        "market", "markets", "consumer", "business", "sales", "revenue"
+        "advertising", "campaign", "creative", "message", "identity", "perception"
     ],
     "Productivity & Systems": [
         "productivity", "systems", "process", "workflow", "efficiency", "automation",
         "focus", "deep work", "habits", "routine", "organization", "planning",
-        "time management", "tools", "method", "framework", "optimization",
-        "work", "working", "productive", "system", "organize", "schedule"
+        "time management", "tools", "method", "framework", "optimization"
     ],
     "Personal Growth & POV": [
         "growth", "development", "learning", "mindset", "philosophy", "wisdom",
         "reflection", "purpose", "meaning", "values", "character", "discipline",
-        "creativity", "craft", "mastery", "journey", "becoming", "transformation",
-        "personal", "self", "improve", "better", "change", "evolve"
+        "creativity", "craft", "mastery", "journey", "becoming", "transformation"
     ],
     "Connection & CX": [
         "customer", "experience", "connection", "relationship", "empathy", "listening",
         "service", "support", "engagement", "satisfaction", "loyalty", "trust",
-        "communication", "feedback", "interaction", "touchpoint", "journey",
-        "connect", "relate", "understand", "care", "help", "serve"
+        "communication", "feedback", "interaction", "touchpoint", "journey"
     ]
 }
 
@@ -374,8 +369,8 @@ def main():
     
     logging.info(f"Found {len(all_content)} quality articles")
     
-    # Generate simple text report for email
-    text_report = generate_text_report(all_content)
+    # Generate PURE PLAIN TEXT report for email
+    text_report = generate_plain_text_report(all_content)
     with open('content_report.txt', 'w', encoding='utf-8') as f:
         f.write(text_report)
     
@@ -395,8 +390,8 @@ def main():
     
     logging.info("Reports generated successfully!")
 
-def generate_text_report(content):
-    """Generate simple text report that emails well"""
+def generate_plain_text_report(content):
+    """Generate PURE PLAIN TEXT report - NO HTML AT ALL"""
     date = datetime.now().strftime("%Y-%m-%d")
     
     if not content:
@@ -408,7 +403,8 @@ The system scraped successfully and will try again tomorrow."""
     
     avg_score = sum(c['score'] for c in content) / len(content)
     
-    report = f"""Daily Content Report - {date}
+    # PURE TEXT - NO HTML TAGS AT ALL
+    report = f"""DAILY CONTENT REPORT - {date}
 
 SUMMARY:
 • Total pieces found: {len(content)}
@@ -426,28 +422,29 @@ SUMMARY:
         by_pillar[pillar].append(article)
     
     for pillar, articles in by_pillar.items():
-        report += f"\n{'='*50}\n"
+        report += f"\n{'='*60}\n"
         report += f"{pillar.upper()} ({len(articles)} pieces)\n"
-        report += f"{'='*50}\n"
+        report += f"{'='*60}\n"
         
         for i, article in enumerate(articles, 1):
             report += f"\n{i}. {article['title']}\n"
             report += f"Source: {article['source']} | Score: {article['score']}/10\n"
             report += f"Link: {article['url']}\n"
             report += f"\nLINKEDIN POST (ready to copy):\n"
-            report += f"{'-'*30}\n"
+            report += f"{'-'*40}\n"
             report += f"{article['linkedin_post']}\n"
-            report += f"{'-'*30}\n\n"
+            report += f"{'-'*40}\n\n"
     
     report += f"""
 
-HOW TO USE:
-• Copy LinkedIn posts from above
-• Download CSV attachment for spreadsheet format
-• Click links to read full articles
-• Customize posts with your own insights
+HOW TO USE THIS REPORT:
+• Copy LinkedIn posts from the sections above
+• Download the CSV attachment for spreadsheet format
+• Click links to read full articles for context
+• Customize posts with your own insights and experiences
 
-Automation runs daily at 9 AM UTC.
+Your automation runs daily at 9 AM UTC.
+Next report will arrive tomorrow automatically.
 """
     
     return report
