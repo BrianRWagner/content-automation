@@ -24,15 +24,21 @@ jobs:
     - name: Run content scraper
       run: python content_scraper.py
     
+    - name: Get current date
+      id: date
+      run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+    
     - name: Send email report
       uses: dawidd6/action-send-mail@v3
       with:
         server_address: smtp.gmail.com
         server_port: 465
+        secure: true
         username: ${{ secrets.EMAIL_USERNAME }}
         password: ${{ secrets.EMAIL_PASSWORD }}
-        subject: "Daily Content Report - ${{ steps.date.outputs.date }}"
+        subject: Daily Content Report - ${{ steps.date.outputs.date }}
         to: ${{ secrets.EMAIL_TO }}
-        from: Content Automation
+        from: Content Automation <${{ secrets.EMAIL_USERNAME }}>
         html_body: file://content_report.html
+        convert_markdown: false
         attachments: content_queue.csv
