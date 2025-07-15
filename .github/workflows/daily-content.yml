@@ -34,5 +34,5 @@ jobs:
         subject: "Daily Content Report - ${{ steps.date.outputs.date }}"
         to: ${{ secrets.EMAIL_TO }}
         from: Content Automation
-        body: file://content_report.html
+        html_body: file://content_report.html
         attachments: content_queue.csv
