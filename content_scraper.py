@@ -374,10 +374,10 @@ def main():
     
     logging.info(f"Found {len(all_content)} quality articles")
     
-    # Generate HTML report
-    html_report = generate_html_report(all_content)
+    # Generate simple text report for email
+    text_report = generate_text_report(all_content)
     with open('content_report.html', 'w', encoding='utf-8') as f:
-        f.write(html_report)
+        f.write(text_report)
     
     # Generate CSV
     with open('content_queue.csv', 'w', newline='', encoding='utf-8') as f:
@@ -395,47 +395,27 @@ def main():
     
     logging.info("Reports generated successfully!")
 
-def generate_html_report(content):
-    """Generate HTML email report"""
+def generate_text_report(content):
+    """Generate simple text report that emails well"""
     date = datetime.now().strftime("%Y-%m-%d")
     
     if not content:
-        return f"""
-        <html>
-        <body>
-            <h1>🎉 Daily Content Report - {date}</h1>
-            <p>No quality content found today. The automation is working, but sources may be slow to update.</p>
-        </body>
-        </html>
-        """
+        return f"""Daily Content Report - {date}
+
+No quality content found today. The automation is working, but sources may be slow to update.
+
+The system scraped successfully and will try again tomorrow."""
     
     avg_score = sum(c['score'] for c in content) / len(content)
     
-    html = f"""
-    <html>
-    <head>
-        <style>
-            body {{ font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }}
-            .header {{ background: #f0f0f0; padding: 20px; border-radius: 5px; margin-bottom: 20px; }}
-            .article {{ border: 1px solid #ddd; margin: 20px 0; padding: 15px; border-radius: 5px; }}
-            .score {{ background: #4CAF50; color: white; padding: 3px 8px; border-radius: 3px; font-weight: bold; }}
-            .post {{ background: #f9f9f9; padding: 15px; margin: 10px 0; border-left: 4px solid #4CAF50; border-radius: 3px; }}
-            .pillar {{ color: #666; font-size: 0.9em; margin: 5px 0; }}
-            h1 {{ color: #333; }}
-            h2 {{ color: #555; border-bottom: 2px solid #eee; padding-bottom: 5px; }}
-            h3 {{ color: #666; margin-top: 0; }}
-            a {{ color: #1976D2; text-decoration: none; }}
-            a:hover {{ text-decoration: underline; }}
-        </style>
-    </head>
-    <body>
-        <div class="header">
-            <h1>🎉 Daily Content Report - {date}</h1>
-            <p><strong>Total pieces found:</strong> {len(content)}</p>
-            <p><strong>Average score:</strong> {avg_score:.1f}/10</p>
-            <p><strong>Ready-to-post content:</strong> All LinkedIn posts below are formatted and ready to copy-paste!</p>
-        </div>
-    """
+    report = f"""Daily Content Report - {date}
+
+SUMMARY:
+• Total pieces found: {len(content)}
+• Average score: {avg_score:.1f}/10
+• Ready-to-post content below
+
+"""
     
     # Group by pillar
     by_pillar = {}
@@ -446,40 +426,31 @@ def generate_html_report(content):
         by_pillar[pillar].append(article)
     
     for pillar, articles in by_pillar.items():
-        html += f"<h2>📚 {pillar} ({len(articles)} pieces)</h2>"
+        report += f"\n{'='*50}\n"
+        report += f"{pillar.upper()} ({len(articles)} pieces)\n"
+        report += f"{'='*50}\n"
         
         for i, article in enumerate(articles, 1):
-            html += f"""
-            <div class="article">
-                <h3>{i}. {article['title']}</h3>
-                <div class="pillar">
-                    <strong>Source:</strong> {article['source']} | 
-                    <span class="score">{article['score']}/10</span>
-                </div>
-                <p><strong>📎 Original:</strong> <a href="{article['url']}" target="_blank">{article['url'][:60]}...</a></p>
-                
-                <div class="post">
-                    <strong>📝 LinkedIn Post (Ready to Copy):</strong><br><br>
-                    {article['linkedin_post'].replace(chr(10), '<br>')}
-                </div>
-            </div>
-            """
+            report += f"\n{i}. {article['title']}\n"
+            report += f"Source: {article['source']} | Score: {article['score']}/10\n"
+            report += f"Link: {article['url']}\n"
+            report += f"\nLINKEDIN POST (ready to copy):\n"
+            report += f"{'-'*30}\n"
+            report += f"{article['linkedin_post']}\n"
+            report += f"{'-'*30}\n\n"
     
-    html += """
-        <div style="margin-top: 30px; padding: 15px; background: #e3f2fd; border-radius: 5px;">
-            <h3>💡 How to Use This Report:</h3>
-            <ul>
-                <li><strong>Copy LinkedIn posts</strong> directly from the blue boxes above</li>
-                <li><strong>Download the CSV attachment</strong> for spreadsheet format</li>
-                <li><strong>Click original links</strong> to read full articles for context</li>
-                <li><strong>Customize posts</strong> with your own insights and experiences</li>
-            </ul>
-        </div>
-    </body>
-    </html>
-    """
+    report += f"""
+
+HOW TO USE:
+• Copy LinkedIn posts from above
+• Download CSV attachment for spreadsheet format
+• Click links to read full articles
+• Customize posts with your own insights
+
+Automation runs daily at 9 AM UTC.
+"""
     
-    return html
+    return report
 
 if __name__ == "__main__":
     main()
